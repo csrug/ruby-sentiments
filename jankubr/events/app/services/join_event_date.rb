@@ -8,7 +8,6 @@ class JoinEventDate
   def join(user)
     return false unless event_date.can_be_joined?
 
-    event_date.users << user
-    event_date.save
+    event_date.event_attendees.create(user: user, event: event_date.event).persisted?
   end
 end

@@ -18,11 +18,11 @@ class Event < ActiveRecord::Base
 
   def generate_event_dates
     if day_of_week
-      event_dates.future.delete_all
+      delete_future_event_dates if day_of_week_changed?
       now = Time.now
       first_date = current_date = get_closest_date
       while first_date + Event.generate_days.days >= current_date
-        event_dates.create!(date: current_date)
+        event_dates.where(date: current_date).first_or_create!
         current_date += 1.week
       end
     else
@@ -42,5 +42,9 @@ private
       closest_date += 1.day
     end
     closest_date
+  end
+
+  def delete_future_event_dates
+    EventDate.where(id: event_dates.future).destroy_all
   end
 end
