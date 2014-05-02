@@ -18,6 +18,10 @@ en:
     attendees: Attendees
     capacity_reached: Capacity reached
     too_late_to_join: Too late to join
+    recur_types:
+      one_off: ''
+      weekly: Weekly
+      biweekly: Bi-weekly
   activerecord:
     attributes:
       event:
@@ -28,4 +32,5 @@ en:
         ends_at: Ends at
         capacity: Capacity
         day_of_week: Every
+        recur_type: Repeat
 

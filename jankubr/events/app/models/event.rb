@@ -10,6 +10,8 @@ class Event < ActiveRecord::Base
   validates_presence_of :day_of_week, if: ->(e) {e.date.blank?}
   after_save :generate_event_dates
 
+  enum recur_type: [:one_off, :weekly, :biweekly]
+
   def self.update_recurring_events
     Event.recurring.each do |event|
       event.generate_event_dates
@@ -21,9 +23,15 @@ class Event < ActiveRecord::Base
       delete_future_event_dates if day_of_week_changed?
       now = Time.now
       first_date = current_date = get_closest_date
+      generate_this_week = true
       while first_date + Event.generate_days.days >= current_date
-        event_dates.where(date: current_date).first_or_create!
+        if generate_this_week
+          event_dates.where(date: current_date).first_or_create!
+        end
         current_date += 1.week
+        if biweekly?
+          generate_this_week = !generate_this_week
+        end
       end
     else
       (event_dates.first || event_dates.new).update_attributes!(date: date)

@@ -41,4 +41,14 @@ describe Event do
       user.reload.events.should == [event]
     end
   end
+
+  it "generates event dates for bi-weekly recurring events" do
+    allow(Event).to receive(:generate_days).and_return(14)
+    event = nil
+    Timecop.travel(Date.new(2014, 4, 30)) do
+      event = FactoryGirl.create(:event, day_of_week: 5, recur_type: 'biweekly')
+      event.event_dates.size.should == 2
+      event.event_dates.map{|ed| ed.date.to_s}.should == ['2014-05-02', '2014-05-16']
+    end
+  end
 end

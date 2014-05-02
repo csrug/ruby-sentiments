@@ -4,7 +4,7 @@ Events for Ruby sentiments
 ROUND 4
 --------------
 1.Regular events can repeat also every two weeks, not just weekly.
-
+Added a choice of weekly/biweekly to events and altered the future event dates generator to skip weeks if requested. Used the new enum functionality of Rails 4.1 to store the repetition kind.
 2. Admin can change every event.
 Allowed admin to do anything in EventsPolicy and updated the integration test to test for it.
 3. When an event is changed, attendees are informed about these changes through email.

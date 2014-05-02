@@ -15,6 +15,10 @@
       <p>
         <%= f.label :day_of_week %>
         <%= f.select :day_of_week, days_of_week_for_select, include_blank: true %>
+
+        <%= f.label :recur_type %>
+        <%= f.select :recur_type, recur_types_for_select %>
+
       </p>
 
     </fieldset>
