@@ -3,7 +3,15 @@ Events for Ruby sentiments
 
 ROUND 3
 --------------
-1. Two types of events: one-off (with a fixed date) and regular (day in week).
+1. Two types of events: one-off (with a fixed date) and recurring (day in week).
+The recurring events are a bit tricky. I see two possible approaches. One is to only store the required repetition in the database and only
+display the repeated events in the UI. So event.day_of_week would have the day of week when the event should be repeated, e.g. Monday.
+Then the UI would show this event for every coming Monday. This is the "correct" "computer science" solution. It is easy to save, but difficult
+to display. A lot of work would need to done in Rails as the database cannot help us much here. We couldn't use the typical pagination. The user registration for an event would need to hold the date for which the user registered. And while building the list of events to display,
+we'd need to look up these registration based on their date.
+As usual I chose a simpler not a "computer science correct", pragmatic solution. A new model EventDate is introduced which holds all the individual events of an event. If it is a one off event, it only has one event_date. If it is a recurring event, it generates even_dates to
+the future far enough for us to care (say 1 year). The display of these information then is then very simple. The attendee registration just
+points to the given event_date. Every night a cron task generates more event_dates to the future. It might get a bit tricky to generate event_dates correctly, but after they are in the database, everything is very simple. The solution is optimized for reading.
 2. Users can join an event the latest one day before it starts.
 The idea here is that I never show the Join button for an event the start of which is less than 1 day away (or which already happened).
 That way our service object JoinEvent or the controller doesn't need to do this check in a very user-friendly way. The check only servers as a protection for a misuse (sending a POST request directly - as from the UI it is not possible). So the JoinEvent service simply returns false if
@@ -39,7 +47,7 @@ app (30k lines not counting tests) that may be a bit premature here.
 Policy objects
 --------------
 Access rights are controlled by policy objects, one for each controller. EventsPolicy is a child of Policy
-that has the basic setup. In EventsPolicy you only whitelist actions that the current user can acess. This
+that has the basic setup. In EventsPolicy you only whitelist actions that the current user can access. This
 can also depend on the record that they currently work on. Policies are also used in views to show/hide
 action links, e.g. allowed?(:destroy, event).
 Policies can also scope collections based on what the current user can see.
