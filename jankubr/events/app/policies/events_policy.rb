@@ -3,7 +3,7 @@ class EventsPolicy < Policy
     if in_action?(:index, :new, :create)
       true
     elsif in_action?(:edit, :update, :destroy)
-      record.user == user
+      user.admin? || record.user == user
     end
   end
 

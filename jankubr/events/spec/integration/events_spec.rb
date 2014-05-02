@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Events' do
-  it "allows a user to create, update and delete an event" do
+  it "allows a user to create, update and delete an event; admin can update any event" do
     user = FactoryGirl.create(:user)
     login_as(user)
     click_link('Add a new event')
@@ -38,12 +38,20 @@ describe 'Events' do
     login_as(user2)
     #another user sees the event
     page.should have_content(event.name)
-    #but cannot updated it
+    #but cannot update it
     page.should_not have_content('Update event')
     visit "/events/#{event.id}/edit"
     page.should_not have_content('Name')
     page.should have_content("The page cannot be accessed")
     visit events_path
+    #only if they are an admin
+    user2.update_attributes(role: 'admin')
+    visit events_path
+    click_link('Update event')
+    fill_in 'Name', with: 'Scala meetup'
+    click_button('Save')
+    event.reload.name.should == 'Scala meetup'
+    page.should have_content(event.name)
 
     login_as(user)
     click_link('Delete event')
