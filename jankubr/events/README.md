@@ -1,14 +1,24 @@
 Events for Ruby sentiments
 ==========================
 
-INCREMENT 2
+ROUND 3
+--------------
+1. Two types of events: one-off (with a fixed date) and regular (day in week).
+2. Users can join an event the latest one day before it starts.
+The idea here is that I never show the Join button for an event the start of which is less than 1 day away (or which already happened).
+That way our service object JoinEvent or the controller doesn't need to do this check in a very user-friendly way. The check only servers as a protection for a misuse (sending a POST request directly - as from the UI it is not possible). So the JoinEvent service simply returns false if
+the event answers false in the method can_be_joined?. Controller than simply reports "Couldn't join the event". It's something a regular user
+never sees as the join button is hidden also when the event returns false from the method can_be_joined? Instead a text
+along the lines of "Too late to join" is shown.
+
+ROUND 2
 --------------
 
 1. User can cancel his registration to event.
 Added a service object LeaveEvent that handles this. Controller action only delegates to this object.
 2. Event has limit of attendees.
 Added capacity field to events table. When capacity reached (as determined by the Event#capacity_reached? method), the "I will attend this event"
-button is not shown. 
+button is not shown.
 Also the service object JoinEvent won't let a user join if the capacity is reached (If user tries to go around the missing
 button). For this I needed a first unit test.
 3. User can be an admin and then see a list of emails of attending users.
@@ -18,7 +28,7 @@ Otherwise, to show the attendees' emails, I'd need to query them with a separate
 Using a join table I can use standard Rails' "includes": Event.includes(:users).order('date, starts_at').
 
 
-INCREMENT 1
+ROUND 1
 --------------
 I approached this as a normal on-the-job task, meaning I used the tools I'm most familiar with and I know
 I can rely on during daily development and will not let me down when I need to develop features fast.
