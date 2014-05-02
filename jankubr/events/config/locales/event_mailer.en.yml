@@ -1,0 +1,4 @@
+en:
+  event_mailer:
+    event_updated:
+      subject: Event update

@@ -8,6 +8,9 @@ Added a choice of weekly/biweekly to events and altered the future event dates g
 2. Admin can change every event.
 Allowed admin to do anything in EventsPolicy and updated the integration test to test for it.
 3. When an event is changed, attendees are informed about these changes through email.
+This is something I wouldn't like to have in a model callback. Often times you'll want to change an event without email every single attendee of it. And it is hard to disable such a callback. These emails should be sent only after a user action. So it should belong to the controller, but that is slow to test and we want to keep it thin and clean. Thus, introduced a new concept to this application - a form object. It simply
+takes the request parameters and updates the event. If the update is successful, it can perform other related tasks, such as in this case
+sending the emails. It is not an object you'd pass in to the form in the template (to the form_for call), it only wraps the create/update series of actions.
 
 ROUND 3
 --------------

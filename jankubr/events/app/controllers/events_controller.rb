@@ -8,11 +8,12 @@ class EventsController < ApplicationController
   end
 
   def create
-    @event = Event.new(@policy.filtered_params.merge(user_id: current_user.id))
-    if @event.save
+    event_form = EventForm.new(current_user, @policy.filtered_params)
+    if event_form.create
       flash[:notice] = t('events.saved')
       redirect_to(events_path)
     else
+      @event = event_form.event
       render action: 'new'
     end
   end
@@ -21,7 +22,7 @@ class EventsController < ApplicationController
   end
 
   def update
-    if @event.update_attributes(@policy.filtered_params)
+    if EventForm.new(current_user, @policy.filtered_params).update(@event)
       flash[:notice] = t('events.updated')
       redirect_to(events_path)
     else

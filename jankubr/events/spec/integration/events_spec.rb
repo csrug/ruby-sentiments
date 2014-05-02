@@ -136,7 +136,7 @@ describe 'Events' do
     page.should_not have_content('Capacity reached')
   end
 
-  it "makes sure user cannot join event if it stats less than a day from now" do
+  it "makes sure user cannot join event if it starts less than a day from now" do
     user = FactoryGirl.create(:user)
     event = FactoryGirl.create(:event, date: Date.today)
 

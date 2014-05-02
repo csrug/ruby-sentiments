@@ -1,0 +1,3 @@
+event update email:
+ - should go to future attendees only
+ - should list all event info and what had changed
